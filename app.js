@@ -6,7 +6,7 @@ const main = () => {
     let turnCounter = 1
     let squaresWon = []
     
-// Declaring Player class
+// Player class declaration
     class Player {
         constructor() {
             this.bets = [];
@@ -22,14 +22,15 @@ const main = () => {
         }
     }
 
-// Declaring Player objects
+// Player objects declaration
     const playerOne = new Player()
     const playerTwo = new Player()
     const playerThree = new Player()
 
-// Disabling betting squares at the start of the game
+// Disable betting squares at the start of the game
     $('.button').addClass('disabled')
 
+// tempBet function adds the value of the chip clicked to the global bet variable
     const tempBet = (player, value) => () => {
         if(player.bank >= value) {
             bet += value
@@ -39,18 +40,22 @@ const main = () => {
         $('.button').removeClass('disabled')
     }
 
+// playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
     const playerBet = (event) => {
         if(turnCounter === 1) {
+            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Black-Chip.png')).append($('<span>').text(bet)))
             playerOne.bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
             $('.button').addClass('disabled')
         } else if(turnCounter === 2) {
+            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Blue-Chip.png')).append($('<span>').text(bet)))            
             playerTwo.bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
             $('.button').addClass('disabled')
         } else if(turnCounter === 3) {
+            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Grey-Chip.png')).append($('<span>').text(bet)))            
             playerThree.bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
@@ -200,6 +205,7 @@ const main = () => {
     const reset = (player) => {
         player.bets = []
         player.payout = []
+        setInterval(() => {$('.square-chips').remove()},5000)
     }
 
     const clear = (player) => () => {
@@ -257,6 +263,7 @@ const main = () => {
     $('#p1-clear').on('click', clear(playerOne))
     $('#p2-clear').on('click', clear(playerTwo))
     $('#p3-clear').on('click', clear(playerThree))
+    $('.button').prepend($('<div>').addClass('square-chips-container'))
 
 
     if(numOfPlayers === 1) {
