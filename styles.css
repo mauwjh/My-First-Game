@@ -495,6 +495,11 @@ body {
 }
 
 .chips {
+    border-style: none;
+    background: transparent;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex: 1;
     height: 100%;
@@ -514,4 +519,17 @@ body {
 
 .disabled {
     pointer-events: none;
+}
+
+.chip-image {
+    display: flex;
+    width: 70%;
+}
+
+.chips span {
+    position: absolute;
+    font-family: Scheherazade;
+    font-weight: bold;
+    font-size: 14px;
+    color: rgb(49, 49, 49);
 }

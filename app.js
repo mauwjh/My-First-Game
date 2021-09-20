@@ -2,7 +2,7 @@ const main = () => {
 // Variable declaration
     let diceResults = []
     let bet = 0
-    let numOfPlayers = 1
+    let numOfPlayers = 3
     let turnCounter = 1
     let squaresWon = []
     
@@ -31,32 +31,31 @@ const main = () => {
     $('.button').addClass('disabled')
 
     const tempBet = (player, value) => () => {
-        bet += value
-        player.bank -= value
+        if(player.bank >= value) {
+            bet += value
+            player.bank -= value
+        }
         render()
         $('.button').removeClass('disabled')
     }
 
-    const playerOneBet = (event) => {
-        playerOne.bets[parseInt($(event.currentTarget).attr('id'))] = bet
-        bet = 0
-        render()
-        $('.button').addClass('disabled')
-    }
-
-    const playerTwoBet = (event) => {
-        playerTwo.bets[parseInt($(event.currentTarget).attr('id'))] = bet
-        bet = 0
-        console.log(playerTwo)
-        render()
-        $('.button').addClass('disabled')
-    }
-
-    const playerThreeBet = (event) => {
-        playerThree.bets[parseInt($(event.currentTarget).attr('id'))] = bet
-        bet = 0
-        render()
-        $('.button').addClass('disabled')
+    const playerBet = (event) => {
+        if(turnCounter === 1) {
+            playerOne.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            bet = 0
+            render()
+            $('.button').addClass('disabled')
+        } else if(turnCounter === 2) {
+            playerTwo.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            bet = 0
+            render()
+            $('.button').addClass('disabled')
+        } else if(turnCounter === 3) {
+            playerThree.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            bet = 0
+            render()
+            $('.button').addClass('disabled')
+        }
     }
 
 // Roll dice 3 times and push into diceResults variable
@@ -149,6 +148,27 @@ const main = () => {
         }
     }
 
+    const enableNextClearChips = (player) => () => {
+        $(`#p${player}-next`).removeClass('disabled')
+        $(`#p${player}-clear`).removeClass('disabled')
+        $(`#p${player}-chips-5`).removeClass('disabled')
+        $(`#p${player}-chips-10`).removeClass('disabled')
+        $(`#p${player}-chips-50`).removeClass('disabled')
+        $(`#p${player}-chips-100`).removeClass('disabled')
+    }
+
+    const disableNextClearChips = (player) => {
+        $(`#p${player}-next`).addClass('disabled')
+        $(`#p${player}-clear`).addClass('disabled')
+        $(`#p${player}-chips-5`).addClass('disabled')
+        $(`#p${player}-chips-10`).addClass('disabled')
+        $(`#p${player}-chips-50`).addClass('disabled')
+        $(`#p${player}-chips-100`).addClass('disabled')
+    }
+
+    disableNextClearChips('2')
+    disableNextClearChips('3')
+
 // Highlights squares that have met the win conditions
     const highlightWinSquares = () => {
         for(let i of squaresWon) {
@@ -160,25 +180,21 @@ const main = () => {
                 $(`#${i}`).removeClass('blink-win')
             }
         }, 5000)
-
-        $('.next').addClass('disabled')
-        $('.clear').addClass('disabled')
-        setInterval(() => {
-            $('.next').removeClass('disabled')
-            $('.clear').removeClass('disabled')
-        },5000)
     }
 
     const nextPlayer = (player) => () => {
         player.bank += bet
         bet = 0
+        render()
         $('.button').addClass('disabled')
+        disableNextClearChips(turnCounter)
         if(turnCounter < numOfPlayers) {
             turnCounter += 1
+            enableNextClearChips(turnCounter)()
         } else {
             turnCounter = 1
+            setInterval(enableNextClearChips(turnCounter), 5000)
         }
-        render()
     }
 
     const reset = (player) => {
@@ -186,22 +202,11 @@ const main = () => {
         player.payout = []
     }
 
-    const disableChipsNextClear = (player) => () => {
-        $(`#${player}-next`).addClass('disabled')
-        $(`#${player}-clear`).addClass('disabled')
-        $(`#${player}-chips-5`).addClass('disabled')
-        $(`#${player}-chips-10`).addClass('disabled')
-        $(`#${player}-chips-50`).addClass('disabled')
-        $(`#${player}-chips-100`).addClass('disabled')
-    }
-
-    const enableChipsNextClear = (player) => () => {
-        $(`#${player}-next`).removeClass('disabled')
-        $(`#${player}-clear`).removeClass('disabled')
-        $(`#${player}-chips-5`).removeClass('disabled')
-        $(`#${player}-chips-10`).removeClass('disabled')
-        $(`#${player}-chips-50`).removeClass('disabled')
-        $(`#${player}-chips-100`).removeClass('disabled')
+    const clear = (player) => () => {
+        player.bank += bet
+        bet = 0
+        $('.button').addClass('disabled')
+        render()
     }
 
     const runSinglePlayer = () => {
@@ -249,17 +254,31 @@ const main = () => {
     $('#p3-chips-10').on('click', tempBet(playerThree, 10))
     $('#p3-chips-50').on('click', tempBet(playerThree, 50))
     $('#p3-chips-100').on('click', tempBet(playerThree, 100))
+    $('#p1-clear').on('click', clear(playerOne))
+    $('#p2-clear').on('click', clear(playerTwo))
+    $('#p3-clear').on('click', clear(playerThree))
+
 
     if(numOfPlayers === 1) {
         $('#p1-board').css('border-right', '0')
         $('#p2-board').hide()
         $('#p3-board').hide()
-        $('.button').on('click', playerOneBet)
+        $('.button').on('click', playerBet)
         $('#p1-next').on('click', nextPlayer(playerOne))
         $('#p1-next').on('click', runSinglePlayer)
     } else if(numOfPlayers === 2) {
         $('#p2-board').css('border-right', '0')
         $('#p3-board').hide()  
+        $('.button').on('click', playerBet)
+        $('#p1-next').on('click', nextPlayer(playerOne))
+        $('#p2-next').on('click', nextPlayer(playerTwo))
+        $('#p2-next').on('click', runTwoPlayer)
+    } else if(numOfPlayers === 3) {
+        $('.button').on('click', playerBet)
+        $('#p1-next').on('click', nextPlayer(playerOne))
+        $('#p2-next').on('click', nextPlayer(playerTwo))
+        $('#p3-next').on('click', nextPlayer(playerThree))
+        $('#p3-next').on('click', runThreePlayer)
     }
 
     const render = () => {
