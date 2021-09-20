@@ -2,7 +2,7 @@ const main = () => {
 // Variable declaration
     let diceResults = []
     let bet = 0
-    let numOfPlayers = 3
+    let numOfPlayers = 1
     let turnCounter = 1
     let squaresWon = []
     const diceAnimationLength = 4000
@@ -29,7 +29,7 @@ const main = () => {
             if(this.payout.length > 0) {
                 this.bank += this.payout.reduce((a,b) => a + b)
             }
-            render()
+            setTimeout(render, totalAnimationLength)
         }
     }
 
@@ -230,6 +230,7 @@ const main = () => {
         $('.dice-roll-dice').eq(0).attr('src', diceImg[diceResults[0]-1])
         $('.dice-roll-dice').eq(1).attr('src', diceImg[diceResults[1]-1])
         $('.dice-roll-dice').eq(2).attr('src', diceImg[diceResults[2]-1])
+        $('.dice-roll-text').text(`You rolled ${diceResults[0]}, ${diceResults[1]}, and ${diceResults[2]}`)
     }
 
     const resetDiceAnimation = () => {
@@ -237,6 +238,8 @@ const main = () => {
         $('.dice-roll-dice').eq(0).removeClass('shake')
         $('.dice-roll-dice').eq(1).removeClass('reverse-shake')
         $('.dice-roll-dice').eq(2).removeClass('shake')
+        setTimeout(() => {$('.dice-roll-text').text('You rolled . . .')}, 500)
+
     }
 
     const diceAnimation = () => {
