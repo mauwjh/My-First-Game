@@ -21,11 +21,13 @@ const main = () => {
             render()
         }
     }
-    
+
+// Declaring Player objects
     const playerOne = new Player()
     const playerTwo = new Player()
     const playerThree = new Player()
 
+// Disabling betting squares at the start of the game
     $('.button').addClass('disabled')
 
     const tempBet = (player, value) => () => {
@@ -45,6 +47,7 @@ const main = () => {
     const playerTwoBet = (event) => {
         playerTwo.bets[parseInt($(event.currentTarget).attr('id'))] = bet
         bet = 0
+        console.log(playerTwo)
         render()
         $('.button').addClass('disabled')
     }
@@ -146,6 +149,7 @@ const main = () => {
         }
     }
 
+// Highlights squares that have met the win conditions
     const highlightWinSquares = () => {
         for(let i of squaresWon) {
             $(`#${i}`).addClass('blink-win')
@@ -156,18 +160,19 @@ const main = () => {
                 $(`#${i}`).removeClass('blink-win')
             }
         }, 5000)
-    }
 
-    const nextPlayer = (player) => () => {
-        player.bank += bet
-        bet = 0
-        $('.button').addClass('disabled')
         $('.next').addClass('disabled')
         $('.clear').addClass('disabled')
         setInterval(() => {
             $('.next').removeClass('disabled')
             $('.clear').removeClass('disabled')
         },5000)
+    }
+
+    const nextPlayer = (player) => () => {
+        player.bank += bet
+        bet = 0
+        $('.button').addClass('disabled')
         if(turnCounter < numOfPlayers) {
             turnCounter += 1
         } else {
@@ -181,17 +186,22 @@ const main = () => {
         player.payout = []
     }
 
-    const render = () => {
-        $('#p1-bank').text(playerOne.bank)
-        $('#p2-bank').text(playerTwo.bank)
-        $('#p3-bank').text(playerThree.bank)
-        if(turnCounter===1) {
-            $('#p1-bet').text(bet)
-        } else if (turnCounter===2) {
-            $('#p2-bet').text(bet)
-        } else if (turnCounter===3) {
-            $('#p3-bet').text(bet)
-        }
+    const disableChipsNextClear = (player) => () => {
+        $(`#${player}-next`).addClass('disabled')
+        $(`#${player}-clear`).addClass('disabled')
+        $(`#${player}-chips-5`).addClass('disabled')
+        $(`#${player}-chips-10`).addClass('disabled')
+        $(`#${player}-chips-50`).addClass('disabled')
+        $(`#${player}-chips-100`).addClass('disabled')
+    }
+
+    const enableChipsNextClear = (player) => () => {
+        $(`#${player}-next`).removeClass('disabled')
+        $(`#${player}-clear`).removeClass('disabled')
+        $(`#${player}-chips-5`).removeClass('disabled')
+        $(`#${player}-chips-10`).removeClass('disabled')
+        $(`#${player}-chips-50`).removeClass('disabled')
+        $(`#${player}-chips-100`).removeClass('disabled')
     }
 
     const runSinglePlayer = () => {
@@ -240,28 +250,32 @@ const main = () => {
     $('#p3-chips-50').on('click', tempBet(playerThree, 50))
     $('#p3-chips-100').on('click', tempBet(playerThree, 100))
 
-    // $('.button').on('click', playerOneBet)
-    // $('.next').on('click', run)
-
     if(numOfPlayers === 1) {
         $('#p1-board').css('border-right', '0')
         $('#p2-board').hide()
         $('#p3-board').hide()
-        render()
-
         $('.button').on('click', playerOneBet)
         $('#p1-next').on('click', nextPlayer(playerOne))
         $('#p1-next').on('click', runSinglePlayer)
-
     } else if(numOfPlayers === 2) {
         $('#p2-board').css('border-right', '0')
-        $('#p3-board').hide()
-        render()
-
-
-    } else if(numOfPlayers === 3) {
-        render()
+        $('#p3-board').hide()  
     }
+
+    const render = () => {
+        $('#p1-bank').text(playerOne.bank)
+        $('#p2-bank').text(playerTwo.bank)
+        $('#p3-bank').text(playerThree.bank)
+        if(turnCounter===1) {
+            $('#p1-bet').text(bet)
+        } else if (turnCounter===2) {
+            $('#p2-bet').text(bet)
+        } else if (turnCounter===3) {
+            $('#p3-bet').text(bet)
+        }   
+    }
+
+    render()
 }
 
 $(main)
