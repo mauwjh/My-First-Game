@@ -5,6 +5,17 @@ const main = () => {
     let numOfPlayers = 3
     let turnCounter = 1
     let squaresWon = []
+    const diceAnimationLength = 4000
+    const highlightSquaresLength = 5000
+    const totalAnimationLength = diceAnimationLength + highlightSquaresLength
+
+    diceImg = 
+    ['Images/dice-six-faces-one.png',
+    'Images/dice-six-faces-two.png',
+    'Images/dice-six-faces-three.png',
+    'Images/dice-six-faces-four.png',
+    'Images/dice-six-faces-five.png',
+    'Images/dice-six-faces-six.png']
     
 // Player class declaration
     class Player {
@@ -184,7 +195,7 @@ const main = () => {
             for(let i of squaresWon) {
                 $(`#${i}`).removeClass('blink-win')
             }
-        }, 5000)
+        }, highlightSquaresLength)
     }
 
     const nextPlayer = (player) => () => {
@@ -198,14 +209,14 @@ const main = () => {
             enableNextClearChips(turnCounter)()
         } else {
             turnCounter = 1
-            setInterval(enableNextClearChips(turnCounter), 5000)
+            setTimeout(enableNextClearChips(turnCounter), totalAnimationLength)
         }
     }
 
     const reset = (player) => {
         player.bets = []
         player.payout = []
-        setInterval(() => {$('.square-chips').remove()},5000)
+        setTimeout(() => {$('.square-chips').remove()},totalAnimationLength)
     }
 
     const clear = (player) => () => {
@@ -215,11 +226,34 @@ const main = () => {
         render()
     }
 
+    const changeDice = () => {
+        $('.dice-roll-dice').eq(0).attr('src', diceImg[diceResults[0]-1])
+        $('.dice-roll-dice').eq(1).attr('src', diceImg[diceResults[1]-1])
+        $('.dice-roll-dice').eq(2).attr('src', diceImg[diceResults[2]-1])
+    }
+
+    const resetDiceAnimation = () => {
+        $('.dice-roll').css('opacity', '0')
+        $('.dice-roll-dice').eq(0).removeClass('shake')
+        $('.dice-roll-dice').eq(1).removeClass('reverse-shake')
+        $('.dice-roll-dice').eq(2).removeClass('shake')
+    }
+
+    const diceAnimation = () => {
+        $('.dice-roll').css('opacity', '1')
+        $('.dice-roll-dice').eq(0).addClass('shake')
+        $('.dice-roll-dice').eq(1).addClass('reverse-shake')
+        $('.dice-roll-dice').eq(2).addClass('shake')
+        setTimeout(changeDice, 1300)
+        setTimeout(resetDiceAnimation, diceAnimationLength)
+    }
+
     const runSinglePlayer = () => {
         rollDice()
         calcPayout(playerOne)
         playerOne.transferPayout()
-        highlightWinSquares()
+        diceAnimation()
+        setTimeout(highlightWinSquares, diceAnimationLength)
         reset(playerOne)
     }
 
@@ -229,7 +263,8 @@ const main = () => {
         calcPayout(playerTwo)
         playerOne.transferPayout()
         playerTwo.transferPayout()
-        highlightWinSquares()
+        diceAnimation()
+        setTimeout(highlightWinSquares, diceAnimationLength)
         reset(playerOne)
         reset(playerTwo)
     }
@@ -242,7 +277,8 @@ const main = () => {
         playerOne.transferPayout()
         playerTwo.transferPayout()
         playerThree.transferPayout()
-        highlightWinSquares()
+        diceAnimation()
+        setTimeout(highlightWinSquares, diceAnimationLength)
         reset(playerOne)
         reset(playerTwo)
         reset(playerThree)
