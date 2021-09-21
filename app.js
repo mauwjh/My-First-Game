@@ -23,10 +23,16 @@ const main = () => {
         'shake',
     ]
 
+    const playerChipColors = [
+        'Images/Black-Chip.png',
+        'Images/Blue-Chip.png',
+        'Images/Grey-Chip.png',
+    ]
+
 // Player class declaration
     class Player {
         constructor() {
-            this.bets = [];
+            this.bets = Array(49).fill(0);
             this.bank = 2000;
             this.payout = [];
         }
@@ -54,25 +60,10 @@ const main = () => {
 
 // playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
     const playerBet = (event) => {
-        if(turnCounter === 1) {
-            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Black-Chip.png')).append($('<span>').text(bet)))
-            players[0].bets[parseInt($(event.currentTarget).attr('id'))] = bet
-            bet = 0
-            render()
-            // $('.button').addClass('disabled')
-        } else if(turnCounter === 2) {
-            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Blue-Chip.png')).append($('<span>').text(bet)))            
-            players[1].bets[parseInt($(event.currentTarget).attr('id'))] = bet
-            bet = 0
-            render()
-            // $('.button').addClass('disabled')
-        } else if(turnCounter === 3) {
-            $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Grey-Chip.png')).append($('<span>').text(bet)))            
-            players[2].bets[parseInt($(event.currentTarget).attr('id'))] = bet
-            bet = 0
-            render()
-            // $('.button').addClass('disabled')
-        }
+        $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1])).append($('<span>').text(bet)))
+        players[turnCounter-1].bets[parseInt($(event.currentTarget).attr('id'))] += bet 
+        bet = 0
+        render()
     }
 
 // Roll dice 3 times and push into diceResults variable
@@ -166,7 +157,6 @@ const main = () => {
         }
     }
 
-    // ! put buttons into array and use for loop
     const enableNextClearChips = (player) => () => {
         let buttonsArray = [$(`#p${player}-next`), $(`#p${player}-clear`), $(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
         for(const buttons of buttonsArray) {
