@@ -2,14 +2,14 @@ const main = () => {
 // Variable declaration
     let diceResults = []
     let bet = 0
-    let numOfPlayers = 1
+    let numOfPlayers = 2
     let turnCounter = 1
     let squaresWon = []
-    const diceAnimationLength = 4000
-    const highlightSquaresLength = 5000
-    const totalAnimationLength = diceAnimationLength + highlightSquaresLength
+    const DICE_ANIMATION_LENGTH = 4000
+    const HIGHLIGHT_SQUARES_LENGTH = 5000
+    const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH
 
-    diceImg = 
+    const diceImg = 
     ['Images/dice-six-faces-one.png',
     'Images/dice-six-faces-two.png',
     'Images/dice-six-faces-three.png',
@@ -17,6 +17,12 @@ const main = () => {
     'Images/dice-six-faces-five.png',
     'Images/dice-six-faces-six.png']
     
+    const diceAnimationClasses = [
+        'shake',
+        'reverse-shake',
+        'shake',
+    ]
+
 // Player class declaration
     class Player {
         constructor() {
@@ -29,17 +35,12 @@ const main = () => {
             if(this.payout.length > 0) {
                 this.bank += this.payout.reduce((a,b) => a + b)
             }
-            setTimeout(render, totalAnimationLength)
+            setTimeout(render, TOTAL_ANIMATION_LENGTH)
         }
     }
 
 // Player objects declaration
-    const playerOne = new Player()
-    const playerTwo = new Player()
-    const playerThree = new Player()
-
-// Disable betting squares at the start of the game
-    $('.button').addClass('disabled')
+    const players = [new Player(), new Player(), new Player()]
 
 // tempBet function adds the value of the chip clicked to the global bet variable
     const tempBet = (player, value) => () => {
@@ -55,22 +56,22 @@ const main = () => {
     const playerBet = (event) => {
         if(turnCounter === 1) {
             $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Black-Chip.png')).append($('<span>').text(bet)))
-            playerOne.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            players[0].bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
-            $('.button').addClass('disabled')
+            // $('.button').addClass('disabled')
         } else if(turnCounter === 2) {
             $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Blue-Chip.png')).append($('<span>').text(bet)))            
-            playerTwo.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            players[1].bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
-            $('.button').addClass('disabled')
+            // $('.button').addClass('disabled')
         } else if(turnCounter === 3) {
             $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', 'Images/Grey-Chip.png')).append($('<span>').text(bet)))            
-            playerThree.bets[parseInt($(event.currentTarget).attr('id'))] = bet
+            players[2].bets[parseInt($(event.currentTarget).attr('id'))] = bet
             bet = 0
             render()
-            $('.button').addClass('disabled')
+            // $('.button').addClass('disabled')
         }
     }
 
@@ -153,37 +154,32 @@ const main = () => {
     const calcPayout = (player) => {
         squaresWon = []
         for(const square of winCheck()) {
-            if(square.win === true) {
+            if(square.win) {
                 squaresWon.push([square.pos, square.odds])
             }
         }
         for(const i of squaresWon) {
-            if(player.bets[i[0]] >= 0) {
-                player.payout.push(player.bets[i[0]]*i[1]+player.bets[i[0]])
+            let betAmount = player.bets[i[0]]
+            if(betAmount >= 0) {
+                player.payout.push(betAmount*i[1]+betAmount)
             }
         }
     }
 
+    // ! put buttons into array and use for loop
     const enableNextClearChips = (player) => () => {
-        $(`#p${player}-next`).removeClass('disabled')
-        $(`#p${player}-clear`).removeClass('disabled')
-        $(`#p${player}-chips-5`).removeClass('disabled')
-        $(`#p${player}-chips-10`).removeClass('disabled')
-        $(`#p${player}-chips-50`).removeClass('disabled')
-        $(`#p${player}-chips-100`).removeClass('disabled')
+        let buttonsArray = [$(`#p${player}-next`), $(`#p${player}-clear`), $(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
+        for(const buttons of buttonsArray) {
+            buttons.removeClass('disabled')
+        }
     }
 
     const disableNextClearChips = (player) => {
-        $(`#p${player}-next`).addClass('disabled')
-        $(`#p${player}-clear`).addClass('disabled')
-        $(`#p${player}-chips-5`).addClass('disabled')
-        $(`#p${player}-chips-10`).addClass('disabled')
-        $(`#p${player}-chips-50`).addClass('disabled')
-        $(`#p${player}-chips-100`).addClass('disabled')
+        let buttonsArray = [$(`#p${player}-next`), $(`#p${player}-clear`), $(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
+        for(const buttons of buttonsArray) {
+            buttons.addClass('disabled')
+        }
     }
-
-    disableNextClearChips('2')
-    disableNextClearChips('3')
 
 // Highlights squares that have met the win conditions
     const highlightWinSquares = () => {
@@ -195,113 +191,85 @@ const main = () => {
             for(let i of squaresWon) {
                 $(`#${i}`).removeClass('blink-win')
             }
-        }, highlightSquaresLength)
+        }, HIGHLIGHT_SQUARES_LENGTH)
     }
 
     const nextPlayer = (player) => () => {
         player.bank += bet
         bet = 0
         render()
-        $('.button').addClass('disabled')
         disableNextClearChips(turnCounter)
         if(turnCounter < numOfPlayers) {
             turnCounter += 1
             enableNextClearChips(turnCounter)()
         } else {
             turnCounter = 1
-            setTimeout(enableNextClearChips(turnCounter), totalAnimationLength)
+            setTimeout(enableNextClearChips(turnCounter), TOTAL_ANIMATION_LENGTH)
         }
     }
 
     const reset = (player) => {
         player.bets = []
         player.payout = []
-        setTimeout(() => {$('.square-chips').remove()},totalAnimationLength)
+        setTimeout(() => {$('.square-chips').remove()},TOTAL_ANIMATION_LENGTH)
     }
 
     const clear = (player) => () => {
         player.bank += bet
         bet = 0
-        $('.button').addClass('disabled')
         render()
     }
 
     const changeDice = () => {
-        $('.dice-roll-dice').eq(0).attr('src', diceImg[diceResults[0]-1])
-        $('.dice-roll-dice').eq(1).attr('src', diceImg[diceResults[1]-1])
-        $('.dice-roll-dice').eq(2).attr('src', diceImg[diceResults[2]-1])
+        for(const i in diceResults) {
+            $('.dice-roll-dice').eq(i).attr('src', diceImg[diceResults[i]-1])
+        }
         $('.dice-roll-text').text(`You rolled ${diceResults[0]}, ${diceResults[1]}, and ${diceResults[2]}`)
     }
 
     const resetDiceAnimation = () => {
         $('.dice-roll').css('opacity', '0')
-        $('.dice-roll-dice').eq(0).removeClass('shake')
-        $('.dice-roll-dice').eq(1).removeClass('reverse-shake')
-        $('.dice-roll-dice').eq(2).removeClass('shake')
+        for(const i in diceResults) {
+            $('.dice-roll-dice').eq(i).removeClass(diceAnimationClasses[i])
+        }
         setTimeout(() => {$('.dice-roll-text').text('You rolled . . .')}, 500)
-
     }
 
     const diceAnimation = () => {
         $('.dice-roll').css('opacity', '1')
-        $('.dice-roll-dice').eq(0).addClass('shake')
-        $('.dice-roll-dice').eq(1).addClass('reverse-shake')
-        $('.dice-roll-dice').eq(2).addClass('shake')
+        for(const i in diceResults) {
+            $('.dice-roll-dice').eq(i).addClass(diceAnimationClasses[i])
+        }
         setTimeout(changeDice, 1300)
-        setTimeout(resetDiceAnimation, diceAnimationLength)
+        setTimeout(resetDiceAnimation, DICE_ANIMATION_LENGTH)
     }
 
-    const runSinglePlayer = () => {
+    const run = () => {
         rollDice()
-        calcPayout(playerOne)
-        playerOne.transferPayout()
+        for(let i = 0; i < numOfPlayers; i++) {
+            calcPayout(players[i])
+            players[i].transferPayout()
+            reset(players[i])
+        }
         diceAnimation()
-        setTimeout(highlightWinSquares, diceAnimationLength)
-        reset(playerOne)
+        setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     }
 
-    const runTwoPlayer = () => {
-        rollDice()
-        calcPayout(playerOne)
-        calcPayout(playerTwo)
-        playerOne.transferPayout()
-        playerTwo.transferPayout()
-        diceAnimation()
-        setTimeout(highlightWinSquares, diceAnimationLength)
-        reset(playerOne)
-        reset(playerTwo)
-    }
-
-    const runThreePlayer = () => {
-        rollDice()
-        calcPayout(playerOne)
-        calcPayout(playerTwo)
-        calcPayout(playerThree)
-        playerOne.transferPayout()
-        playerTwo.transferPayout()
-        playerThree.transferPayout()
-        diceAnimation()
-        setTimeout(highlightWinSquares, diceAnimationLength)
-        reset(playerOne)
-        reset(playerTwo)
-        reset(playerThree)
-    }
-
-    $('#p1-chips-5').on('click', tempBet(playerOne, 5))
-    $('#p1-chips-10').on('click', tempBet(playerOne, 10))
-    $('#p1-chips-50').on('click', tempBet(playerOne, 50))
-    $('#p1-chips-100').on('click', tempBet(playerOne, 100))
-    $('#p2-chips-5').on('click', tempBet(playerTwo, 5))
-    $('#p2-chips-10').on('click', tempBet(playerTwo, 10))
-    $('#p2-chips-50').on('click', tempBet(playerTwo, 50))
-    $('#p2-chips-100').on('click', tempBet(playerTwo, 100))
-    $('#p3-chips-5').on('click', tempBet(playerThree, 5))
-    $('#p3-chips-10').on('click', tempBet(playerThree, 10))
-    $('#p3-chips-50').on('click', tempBet(playerThree, 50))
-    $('#p3-chips-100').on('click', tempBet(playerThree, 100))
-    $('#p1-clear').on('click', clear(playerOne))
-    $('#p2-clear').on('click', clear(playerTwo))
-    $('#p3-clear').on('click', clear(playerThree))
+    $('#p1-chips-5').on('click', tempBet(players[0], 5))
+    $('#p1-chips-10').on('click', tempBet(players[0], 10))
+    $('#p1-chips-50').on('click', tempBet(players[0], 50))
+    $('#p1-chips-100').on('click', tempBet(players[0], 100))
+    $('#p2-chips-5').on('click', tempBet(players[1], 5))
+    $('#p2-chips-10').on('click', tempBet(players[1], 10))
+    $('#p2-chips-50').on('click', tempBet(players[1], 50))
+    $('#p2-chips-100').on('click', tempBet(players[1], 100))
+    $('#p3-chips-5').on('click', tempBet(players[2], 5))
+    $('#p3-chips-10').on('click', tempBet(players[2], 10))
+    $('#p3-chips-50').on('click', tempBet(players[2], 50))
+    $('#p3-chips-100').on('click', tempBet(players[2], 100))
+    $('#p1-clear').on('click', clear(players[0]))
+    $('#p2-clear').on('click', clear(players[1]))
+    $('#p3-clear').on('click', clear(players[2]))
     $('.button').prepend($('<div>').addClass('square-chips-container'))
 
 
@@ -310,27 +278,27 @@ const main = () => {
         $('#p2-board').hide()
         $('#p3-board').hide()
         $('.button').on('click', playerBet)
-        $('#p1-next').on('click', nextPlayer(playerOne))
-        $('#p1-next').on('click', runSinglePlayer)
+        $('#p1-next').on('click', nextPlayer(players[0]))
+        $('#p1-next').on('click', run)
     } else if(numOfPlayers === 2) {
         $('#p2-board').css('border-right', '0')
         $('#p3-board').hide()  
         $('.button').on('click', playerBet)
-        $('#p1-next').on('click', nextPlayer(playerOne))
-        $('#p2-next').on('click', nextPlayer(playerTwo))
-        $('#p2-next').on('click', runTwoPlayer)
+        $('#p1-next').on('click', nextPlayer(players[0]))
+        $('#p2-next').on('click', nextPlayer(players[1]))
+        $('#p2-next').on('click', run)
     } else if(numOfPlayers === 3) {
         $('.button').on('click', playerBet)
-        $('#p1-next').on('click', nextPlayer(playerOne))
-        $('#p2-next').on('click', nextPlayer(playerTwo))
-        $('#p3-next').on('click', nextPlayer(playerThree))
-        $('#p3-next').on('click', runThreePlayer)
+        $('#p1-next').on('click', nextPlayer(players[0]))
+        $('#p2-next').on('click', nextPlayer(players[1]))
+        $('#p3-next').on('click', nextPlayer(players[2]))
+        $('#p3-next').on('click', run)
     }
 
     const render = () => {
-        $('#p1-bank').text(playerOne.bank)
-        $('#p2-bank').text(playerTwo.bank)
-        $('#p3-bank').text(playerThree.bank)
+        $('#p1-bank').text(players[0].bank)
+        $('#p2-bank').text(players[1].bank)
+        $('#p3-bank').text(players[2].bank)
         if(turnCounter===1) {
             $('#p1-bet').text(bet)
         } else if (turnCounter===2) {
@@ -338,7 +306,13 @@ const main = () => {
         } else if (turnCounter===3) {
             $('#p3-bet').text(bet)
         }   
+        $('.button').addClass('disabled')
     }
+
+    // Disable betting squares at the start of the game
+    $('.button').addClass('disabled')
+    disableNextClearChips('2')
+    disableNextClearChips('3')
 
     render()
 }
