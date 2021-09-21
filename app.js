@@ -1,11 +1,12 @@
 // Variable declaration
 let diceResults = []
 let bet = 0
-let numOfPlayers = 2
+let numOfPlayers = 1
 let turnCounter = 1
 let squaresWon = []
+let chipsRemove = []
 const DICE_ANIMATION_LENGTH = 4000
-const HIGHLIGHT_SQUARES_LENGTH = 5000
+const HIGHLIGHT_SQUARES_LENGTH = 1000
 const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH
 
 const diceImg = 
@@ -20,12 +21,6 @@ const diceAnimationClasses = [
     'shake',
     'reverse-shake',
     'shake',
-]
-
-const playerChipColors = [
-    'Images/Black-Chip.png',
-    'Images/Blue-Chip.png',
-    'Images/Grey-Chip.png',
 ]
 
 // Player class declaration
@@ -47,6 +42,12 @@ class Player {
 // Player objects declaration
 const players = [new Player(), new Player(), new Player()]
 
+const playerChipColors = [
+    [players[0], 'Images/Black-Chip.png'],
+    [players[1], 'Images/Blue-Chip.png'],
+    [players[2], 'Images/Grey-Chip.png'],
+]
+
 // tempBet function adds the value of the chip clicked to the global bet variable
 const tempBet = (player, value) => () => {
     if(player.bank >= value) {
@@ -59,7 +60,23 @@ const tempBet = (player, value) => () => {
 
 // playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
 const playerBet = (event) => {
-    $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1])).append($('<span>').text(bet)))
+    const chip = $('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet))
+    $(event.currentTarget).children().eq(0).append(chip)
+    chipOffset = chip.offset()
+    chip.hide()
+
+    const bankOffset = $(`#p${turnCounter}-bank`).offset() 
+
+    const temp = $('<div>').addClass('temp-chip').append($('<img>').attr('src', playerChipColors[turnCounter-1][1]))
+    const $temp = temp.appendTo('html')
+    $temp.css('top', bankOffset.top)
+    $temp.css('left', bankOffset.left)
+    $temp.animate({'top': chipOffset.top, 'left': chipOffset.left}, 500, () => {
+        temp.remove()
+        chip.show()
+    })
+
+    // $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet)))
     players[turnCounter-1].bets[parseInt($(event.currentTarget).attr('id'))] += bet 
     bet = 0
     render()
@@ -150,24 +167,35 @@ const calcPayout = (player) => {
     }
     for(const i of squaresWon) {
         let betAmount = player.bets[i[0]]
-        if(betAmount >= 0) {
+        if(betAmount > 0) {
             player.payout.push(betAmount*i[1]+betAmount)
+            chipsRemove.push(i[0])
         }
     }
 }
 
 const enableNextClearChips = (player) => () => {
-    let buttonsArray = [$(`#p${player}-next`), $(`#p${player}-clear`), $(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
+    let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
+    let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
     for(const buttons of buttonsArray) {
-        buttons.removeClass('disabled')
+        buttons.removeClass('disabled-grey')
     }
+    for(const chips of chipsArray) {
+        chips.removeClass('disabled')
+    }
+    $(`#p${player}-arrow`).show()
 }
 
 const disableNextClearChips = (player) => {
-    let buttonsArray = [$(`#p${player}-next`), $(`#p${player}-clear`), $(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
+    let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
+    let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
     for(const buttons of buttonsArray) {
-        buttons.addClass('disabled')
+        buttons.addClass('disabled-grey')
     }
+    for(const chips of chipsArray) {
+        chips.addClass('disabled')
+    }
+    $(`#p${player}-arrow`).hide()
 }
 
 // Highlights squares that have met the win conditions
@@ -198,8 +226,35 @@ const nextPlayer = (player) => () => {
 }
 
 const reset = (player) => {
-    player.bets = []
+    player.bets = Array(49).fill(0)
     player.payout = []
+    const removeChips = () => {
+        for(const squaresIndex of chipsRemove) {
+            console.log(squaresIndex)
+            console.log($(`#${squaresIndex}`).find('.square-chips').children().eq(0).attr('src'))
+            for(let i = 0; i < $(`#${squaresIndex}`).find('.square-chips').length; i++) {
+                for(let j = 0; j < players.length; j++) {
+                    if($(`#${squaresIndex}`).find('.square-chips').children().eq(0).attr('src') === playerChipColors[j][1]) {
+                        chip = $(`#${squaresIndex}`).find('.square-chips')
+                        chipOffset = chip.offset()
+                        chip.hide()
+                    
+                        const bankOffset = $(`#p${turnCounter}-bank`).offset() 
+                    
+                        const temp = $('<div>').addClass('temp-chip').append($('<img>').attr('src', playerChipColors[j][1]))
+                        const $temp = temp.appendTo('html')
+                        $temp.css('top', chipOffset.top)
+                        $temp.css('left', chipOffset.left)
+                        $temp.animate({'top': bankOffset.top, 'left': bankOffset.left}, 500, () => {
+                            temp.remove()
+                        })
+                    }
+                }
+            }
+        }
+    }
+    setTimeout(removeChips,TOTAL_ANIMATION_LENGTH)
+
     setTimeout(() => {$('.square-chips').remove()},TOTAL_ANIMATION_LENGTH)
 }
 
@@ -303,6 +358,7 @@ const main = () => {
     disableNextClearChips('2')
     disableNextClearChips('3')
 
+    // initial render
     render()
 }
 

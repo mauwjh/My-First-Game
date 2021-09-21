@@ -3,6 +3,7 @@ body {
     color: gold;
     overflow-x: hidden;
     overflow-y: hidden;
+    position: relative;
 }
 
 #canvas {
@@ -383,6 +384,9 @@ body {
     color: gold;
     font-size: 25px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .bank-bet-container {
@@ -510,6 +514,22 @@ body {
     justify-content: center;
 }
 
+.blinking-arrow {
+    display: flex;
+    position: absolute;
+    margin-right: 208px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid white;
+    animation: blink-arrow 1s linear infinite 
+}
+
+@keyframes blink-arrow {
+    50%{
+        border-left: 8px solid transparent
+    }
+}
+
 .blink-win {
     animation: blinker 1s linear infinite;
 }
@@ -522,6 +542,13 @@ body {
 
 .disabled {
     pointer-events: none;
+}
+
+.disabled-grey {
+    pointer-events: none;
+    background-color: rgb(217, 217, 217);
+    color: rgb(176, 176, 176);
+    border-color: rgb(176,176,176)
 }
 
 .chip-image {
@@ -553,6 +580,15 @@ body {
     width: max-content;
     justify-content: center;
     align-items: center;
+}
+
+.temp-chip {
+    position: absolute;
+    width: max-content;
+}
+
+.temp-chip img{
+    width: 28px;
 }
 
 .square-chips img {
