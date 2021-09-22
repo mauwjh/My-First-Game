@@ -8,9 +8,38 @@
     <script src="app.js"></script>
     <link rel="stylesheet" href="styles.css">
     <title>Matt's Project</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
+        </style>
     <style>@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap');</style>
 </head>
 <body>
+    <div id='landing-page'>
+        <span class='landing-page-header'>WELCOME TO SIC BO</span>
+        <span class='landing-page-text'>A game of ancient Chinese origin played with three dice.<br>The rules are simple: Place your bets and roll the dice!</span>
+        <select name="GameMode" id='game-mode' class='dropdown'>
+            <option value="none" selected disabled>Select a Game Mode</option>
+            <option value="choice1">Casino Mode</option>
+            <option value="choice2">PvP Mode</option>
+        </select>
+        <div id='choice1' class='game-desc'>
+            <span class='game-mode-header'>CASINO MODE</span>
+            <span class='game-mode-text'>Simulate a real casino experience and pit your odds against the house!</span>
+        </div>
+        <div id='choice2' class='game-desc'>
+            <span class='game-mode-header'>PVP MODE</span>
+            <span class='game-mode-text'>The player with the most money in the bank after 10 turns will be crowned the champion!</span>
+        </div>
+
+        <select name="numOfPlayers" id="numOfPlayers" class='dropdown'>
+            <option value="none" selected disabled>Number of Players</option>
+            <option value="1">One Player</option>
+            <option value="2">Two Players</option>
+            <option value="3">Three Players</option>
+        </select>
+
+        <button class='submit'>LET'S PLAY</button>
+    </div>
     <div id='canvas'>
         <div id='board-container'>
             <div id='row1' class='row'>
