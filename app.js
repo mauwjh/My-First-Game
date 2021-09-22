@@ -1,12 +1,12 @@
 // Variable declaration
 let diceResults = []
 let bet = 0
-let numOfPlayers = 1
+let numOfPlayers = 3
 let turnCounter = 1
 let squaresWon = []
 let chipsRemove = []
 const DICE_ANIMATION_LENGTH = 4000
-const HIGHLIGHT_SQUARES_LENGTH = 1000
+const HIGHLIGHT_SQUARES_LENGTH = 5000
 const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH
 
 const diceImg = 
@@ -43,9 +43,9 @@ class Player {
 const players = [new Player(), new Player(), new Player()]
 
 const playerChipColors = [
-    [players[0], 'Images/Black-Chip.png'],
-    [players[1], 'Images/Blue-Chip.png'],
-    [players[2], 'Images/Grey-Chip.png'],
+    [players[0], 'Images/Black-Chip.png', 'p1-chip'],
+    [players[1], 'Images/Blue-Chip.png', 'p2-chip'],
+    [players[2], 'Images/Grey-Chip.png', 'p3-chip'],
 ]
 
 // tempBet function adds the value of the chip clicked to the global bet variable
@@ -60,7 +60,7 @@ const tempBet = (player, value) => () => {
 
 // playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
 const playerBet = (event) => {
-    const chip = $('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet))
+    const chip = $('<div>').addClass('square-chips').attr('id', playerChipColors[turnCounter-1][2]).append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet))
     $(event.currentTarget).children().eq(0).append(chip)
     chipOffset = chip.offset()
     chip.hide()
@@ -68,10 +68,10 @@ const playerBet = (event) => {
     const bankOffset = $(`#p${turnCounter}-bank`).offset() 
 
     const temp = $('<div>').addClass('temp-chip').append($('<img>').attr('src', playerChipColors[turnCounter-1][1]))
-    const $temp = temp.appendTo('html')
-    $temp.css('top', bankOffset.top)
-    $temp.css('left', bankOffset.left)
-    $temp.animate({'top': chipOffset.top, 'left': chipOffset.left}, 500, () => {
+    temp.appendTo('html')
+    temp.css('top', bankOffset.top)
+    temp.css('left', bankOffset.left)
+    temp.animate({'top': chipOffset.top, 'left': chipOffset.left}, 500, () => {
         temp.remove()
         chip.show()
     })
@@ -225,42 +225,42 @@ const nextPlayer = (player) => () => {
     }
 }
 
-const reset = (player) => {
-    player.bets = Array(49).fill(0)
-    player.payout = []
-    const removeChips = () => {
-        for(const squaresIndex of chipsRemove) {
-            console.log(squaresIndex)
-            console.log($(`#${squaresIndex}`).find('.square-chips').children().eq(0).attr('src'))
-            for(let i = 0; i < $(`#${squaresIndex}`).find('.square-chips').length; i++) {
-                for(let j = 0; j < players.length; j++) {
-                    if($(`#${squaresIndex}`).find('.square-chips').children().eq(0).attr('src') === playerChipColors[j][1]) {
-                        chip = $(`#${squaresIndex}`).find('.square-chips')
-                        chipOffset = chip.offset()
-                        chip.hide()
-                    
-                        const bankOffset = $(`#p${turnCounter}-bank`).offset() 
-                    
-                        const temp = $('<div>').addClass('temp-chip').append($('<img>').attr('src', playerChipColors[j][1]))
-                        const $temp = temp.appendTo('html')
-                        $temp.css('top', chipOffset.top)
-                        $temp.css('left', chipOffset.left)
-                        $temp.animate({'top': bankOffset.top, 'left': bankOffset.left}, 500, () => {
-                            temp.remove()
-                        })
-                    }
-                }
+const removeChips = () => {
+    chipsRemove = chipsRemove.filter((a, b, c) => c.indexOf(a) == b)
+    for(const squaresIndex of chipsRemove) {
+        for(let i = 0; i < players.length; i++) {
+            for(let j = 0; j < $(`#${squaresIndex}`).find(`#${playerChipColors[i][2]}`).length; j++) {
+                chip = $(`#${squaresIndex}`).find(`#${playerChipColors[i][2]}`)
+                console.log(chip)
+                chipOffset = chip.offset()
+                chip.hide()
+            
+                const bankOffset = $(`#p${i+1}-bank`).offset() 
+            
+                const temp = $('<div>').addClass('temp-chip').append($('<img>').attr('src', playerChipColors[i][1]))
+                temp.appendTo('html')
+                temp.css('top', chipOffset.top)
+                temp.css('left', chipOffset.left)
+                temp.animate({'top': bankOffset.top, 'left': bankOffset.left}, 1000, () => {
+                    temp.remove()
+                })
             }
         }
     }
-    setTimeout(removeChips,TOTAL_ANIMATION_LENGTH)
+}
 
+const reset = (player) => {
+    player.bets = Array(49).fill(0)
+    player.payout = []
+
+    setTimeout(removeChips,TOTAL_ANIMATION_LENGTH)
     setTimeout(() => {$('.square-chips').remove()},TOTAL_ANIMATION_LENGTH)
 }
 
 const clear = (player) => () => {
     player.bank += bet
     bet = 0
+
     render()
 }
 
