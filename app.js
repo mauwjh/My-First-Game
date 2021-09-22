@@ -60,7 +60,9 @@ const tempBet = (player, value) => () => {
 
 // playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
 const playerBet = (event) => {
-    const chip = $('<div>').addClass('square-chips').attr('id', playerChipColors[turnCounter-1][2]).append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet))
+    const chipText = $('<span>').text(bet)
+    const chipImg = $('<img>').attr('src', playerChipColors[turnCounter-1][1])
+    const chip = $('<div>').addClass('square-chips').attr('id', playerChipColors[turnCounter-1][2]).append(chipImg).append(chipText)
     $(event.currentTarget).children().eq(0).append(chip)
     chipOffset = chip.offset()
     chip.hide()
