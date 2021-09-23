@@ -314,14 +314,14 @@ const gameOver = () => {
             winner = players[i].name
         }
     }
-    for(let i = 0; i < players.length; i++) {
+    for(let i = 0; i < numOfPlayers; i++) {
         if(players[i].name !== winner && players[i].bank === winnerBank) {
             $('.dice-roll-text').text('It\'s a tie!')
         } else {
             $('.dice-roll-text').text(`${winner} won with ${winnerBank} in the bank!`)
         }
     }
-    for(let j = 0; j < players.length; j++) {
+    for(let j = 0; j < numOfPlayers; j++) {
         $('.dice-roll').append($('<div>').addClass('turns-remaining').text(`${players[j].name}: $${players[j].bank}`))
     }
 }
