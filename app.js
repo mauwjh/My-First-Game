@@ -1,4 +1,7 @@
-// Variable declaration
+// Project 1 - Sic Bo v1.0
+// 23092021
+
+// Global var declaration
 let diceResults = []
 let bet = 0
 let numOfPlayers = 0
@@ -14,6 +17,7 @@ const PLACE_CHIP_LENGTH = 500
 const REMOVE_CHIP_LENGTH = 1000
 const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH + REMOVE_CHIP_LENGTH
 
+// dice images
 const diceImg = 
 ['Images/dice-six-faces-one.png',
 'Images/dice-six-faces-two.png',
@@ -22,6 +26,7 @@ const diceImg =
 'Images/dice-six-faces-five.png',
 'Images/dice-six-faces-six.png']
 
+// dice animation classes
 const diceAnimationClasses = [
     'shake',
     'reverse-shake',
@@ -38,6 +43,7 @@ class Player {
         this.number = number
     }
 
+    // adds payouts to bank when player wins. Reveals sliding animation to show how much is won.
     transferPayout() {
         if(this.payout.length > 0) {
             let payout = this.payout.reduce((a,b) => a + b)
@@ -74,7 +80,9 @@ const tempBet = (player, value) => () => {
     $('.button').removeClass('disabled')
 }
 
-// playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. The position in the player's bet array is determined by which square is clicked on the board
+// playerBet function adds the value of the global bet variable to the relevant player's bet array with the player object. 
+// The position in the player's bet array is determined by which square is clicked on the board
+// lines 87 to 103 are for the animation of moving a chip from bank to the clicked square
 const playerBet = (event) => {
     const chipText = $('<span>').text(bet)
     const chipImg = $('<img>').attr('src', playerChipColors[turnCounter-1][1])
@@ -94,7 +102,6 @@ const playerBet = (event) => {
         chip.show()
     })
 
-    // $(event.currentTarget).children().eq(0).append($('<div>').addClass('square-chips').append($('<img>').attr('src', playerChipColors[turnCounter-1][1])).append($('<span>').text(bet)))
     players[turnCounter-1].bets[parseInt($(event.currentTarget).attr('id'))] += bet 
     bet = 0
     render()
@@ -192,6 +199,7 @@ const calcPayout = (player) => {
     }
 }
 
+// Enables player buttons based on turn
 const enableNextClearChips = (player) => () => {
     let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
     let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
@@ -204,6 +212,7 @@ const enableNextClearChips = (player) => () => {
     $(`#p${player}-arrow`).show()
 }
 
+// Disables player buttons if not their turn
 const disableNextClearChips = (player) => () =>{
     let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
     let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
@@ -216,6 +225,7 @@ const disableNextClearChips = (player) => () =>{
     $(`#p${player}-arrow`).hide()
 }
 
+// Returns chips to players bank for squares where they have placed bets and won
 const removeChips = () => {
     chipsRemove = chipsRemove.filter((a, b, c) => c.indexOf(a) == b)
     console.log(chipsRemove)
@@ -258,6 +268,9 @@ const highlightWinSquares = () => {
     setTimeout(removeChips,HIGHLIGHT_SQUARES_LENGTH)
 }
 
+// Called when 'Done' button is pressed
+// Calls the disable function which disables the current player's buttons and activates the next player's buttons
+// If the player is the last in the round, triggers dice roll via the run() function
 const nextPlayer = (player) => () => {
     player.bank += bet
     bet = 0
@@ -273,11 +286,13 @@ const nextPlayer = (player) => () => {
     }
 }
 
+// Redeclares player variables
 const reset = (player) => {
     player.bets = Array(50).fill(0)
     player.payout = []
 }
 
+// Called when 'Clear' button is pressed. Moves bet value back to bank
 const clear = (player) => () => {
     player.bank += bet
     bet = 0
@@ -285,11 +300,13 @@ const clear = (player) => () => {
     render()
 }
 
+// Calculates the number of turns remaining (Only relevant for PvP game mode)
 const turnsRemaining = () => {
     $('.turns-remaining').css('display', 'flex')
     $('.turns-remaining').text(`${10 - totalTurnCounter} turns remaining`)
 }
 
+// Changes dice images based on the dice rolled
 const changeDice = () => {
     for(const i in diceResults) {
         $('.dice-roll-dice').eq(i).attr('src', diceImg[diceResults[i]-1])
@@ -297,6 +314,7 @@ const changeDice = () => {
     $('.dice-roll-text').text(`You rolled ${diceResults[0]}, ${diceResults[1]}, and ${diceResults[2]}`)
 }
 
+// Resets dice animation and hides the div once animation is complete
 const resetDiceAnimation = () => {
     $('.dice-roll').css('opacity', '0')
     for(const i in diceResults) {
@@ -305,6 +323,7 @@ const resetDiceAnimation = () => {
     setTimeout(() => {$('.dice-roll-text').text('You rolled . . .')}, 500)
 }
 
+// calls the changeDice() and resetDiceAnimation() functions while also revealing the dice div
 const diceAnimation = () => {
     $('.dice-roll').css('opacity', '1')
     if(gameMode === 'choice2') {
@@ -317,6 +336,8 @@ const diceAnimation = () => {
     setTimeout(resetDiceAnimation, DICE_ANIMATION_LENGTH)
 }
 
+// For PvP, this function is called when the turn counter reaches 10 and evaluates the winner
+// Function will determine if there is a winner or a tie, and return the value of all players' bank amounts
 const gameOver = () => {
     let winner = ''
     let winnerBank = 0
@@ -341,6 +362,7 @@ const gameOver = () => {
     }
 }
 
+// Core run function that triggers the dice roll, payouts, dice animations etc.
 const run = () => {
     rollDice()  
     for(let i = 0; i < numOfPlayers; i++) {
@@ -357,6 +379,7 @@ const run = () => {
     }
 }
 
+// Initial button declaration
 const buttonInit = () => {
     for(let i = 0; i < players.length; i++) {
         let playerNumber = i + 1
@@ -377,6 +400,7 @@ const buttonInit = () => {
     disableNextClearChips('3')()
 }
 
+// Initial board display
 const boardInit = () => {
     if(numOfPlayers == 1) {
     $('#p1-board').css('border-right', '0')
@@ -388,6 +412,7 @@ const boardInit = () => {
     }
 }
 
+// For landing page: determines whether all picklists have been selected and displays submit button
 const allowSubmit = () => {
     if($('#game-mode').find(':selected').val() !== 'none' && $('#numOfPlayers').find(':selected').val() !== 'none') {
         $('.submit').css({'opacity': '1', 'pointer-events': 'auto'})
@@ -396,6 +421,7 @@ const allowSubmit = () => {
     }
 }
 
+// Landing page picklist field setup
 const landingPageInit = () => {
     $('.submit').css('opacity', '0')
     $('#numOfPlayers').on('change', () => {
@@ -403,6 +429,8 @@ const landingPageInit = () => {
         allowSubmit()
     })
 
+    // Displays the game description based on value selected
+    // If PvP is selected, will not allow for number of players to equal 1 and hide that option
     $('.game-desc').hide()
     $('#game-mode').on('change', () => {
         $('.game-desc').hide()
@@ -420,6 +448,7 @@ const landingPageInit = () => {
         allowSubmit()
     })
 
+    // Initialises board and buttons on click, then hides the landing page
     $('.submit').on('click', () => {
         boardInit()
         buttonInit()
@@ -428,6 +457,7 @@ const landingPageInit = () => {
     })
 }
 
+// Main render function to update bank and bet values
 const render = () => {
     for(let i = 0; i < players.length; i++) {
         $(`#p${i+1}-bank`).text(players[i].bank)
