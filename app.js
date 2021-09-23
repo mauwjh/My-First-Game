@@ -192,7 +192,7 @@ const enableNextClearChips = (player) => () => {
     $(`#p${player}-arrow`).show()
 }
 
-const disableNextClearChips = (player) => {
+const disableNextClearChips = (player) => () =>{
     let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
     let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
     for(const buttons of buttonsArray) {
@@ -250,7 +250,7 @@ const nextPlayer = (player) => () => {
     player.bank += bet
     bet = 0
     render()
-    disableNextClearChips(turnCounter)
+    disableNextClearChips(turnCounter)()
     if(turnCounter < numOfPlayers) {
         turnCounter += 1
         enableNextClearChips(turnCounter)()
@@ -325,7 +325,7 @@ const gameOver = () => {
         }
     }
     for(let j = 0; j < numOfPlayers; j++) {
-        $('.dice-roll').append($('<div>').addClass('turns-remaining').text(`${players[j].name}: $${players[j].bank}`))
+        $('.dice-roll').append($('<div>').addClass('turns-remaining').css('display', 'flex').text(`${players[j].name}: $${players[j].bank}`))
     }
 }
 
@@ -340,7 +340,8 @@ const run = () => {
     diceAnimation()
     setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     if(totalTurnCounter === TOTAL_TURNS && gameMode === 'choice2') {
-        setTimeout(gameOver,TOTAL_ANIMATION_LENGTH)
+        setTimeout(disableNextClearChips('1'), TOTAL_ANIMATION_LENGTH+1)
+        setTimeout(gameOver,TOTAL_ANIMATION_LENGTH+1000)
     }
 }
 
@@ -435,8 +436,8 @@ const render = () => {
 const main = () => {
     // disable betting squares at the start of the game
     $('.button').addClass('disabled')
-    disableNextClearChips('2')
-    disableNextClearChips('3')
+    disableNextClearChips('2')()
+    disableNextClearChips('3')()
 
     // initial render
     render()
