@@ -294,7 +294,7 @@ const resetDiceAnimation = () => {
 
 const diceAnimation = () => {
     $('.dice-roll').css('opacity', '1')
-    if(gameMode='choice2'){
+    if(gameMode==='choice2'){
         turnsRemaining()
     }
     for(const i in diceResults) {
