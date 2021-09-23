@@ -334,6 +334,17 @@ const buttonInit = () => {
     $('#p3-next').on('click', nextPlayer(players[turnCounter-1]))
 }
 
+const boardInit = () => {
+    if(numOfPlayers == 1) {
+    $('#p1-board').css('border-right', '0')
+    $('#p2-board').hide()
+    $('#p3-board').hide()
+    } else if(numOfPlayers == 2) {
+        $('#p2-board').css('border-right', '0')
+        $('#p3-board').hide()  
+    }
+}
+
 const render = () => {
     $('#p1-bank').text(players[0].bank)
     $('#p2-bank').text(players[1].bank)
@@ -357,7 +368,7 @@ const main = () => {
     // initial render
     render()
 
-    $('.submit').css({'opacity': '0', 'pointer-events': 'none'})
+    $('.submit').css({'opacity': '0'})
     $('#numOfPlayers').on('change', () => {
         numOfPlayers = $('#numOfPlayers').find(':selected').val()
         console.log(numOfPlayers)
@@ -373,14 +384,8 @@ const main = () => {
     })
 
     $('.submit').on('click', () => {
-        if(numOfPlayers === 1) {
-            $('#p1-board').css('border-right', '0')
-            $('#p2-board').hide()
-            $('#p3-board').hide()
-        } else if(numOfPlayers === 2) {
-            $('#p2-board').css('border-right', '0')
-            $('#p3-board').hide()  
-        }
+        boardInit()
+        buttonInit()
         $('#landing-page').css('opacity', '0')
         setTimeout(() => {$('#landing-page').hide()}, 500)
     })
