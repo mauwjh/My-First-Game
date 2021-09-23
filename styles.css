@@ -47,16 +47,27 @@ body {
 }
 
 .game-desc {
+    display: flex;
+    flex-direction: column;
     margin: 20px;
+    width: 500px;
 }
 
 .game-mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     font-size: 20px;
     font-weight: 500;
     margin-bottom: 10px;
 }
 
 .game-mode-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     font-size: 14px;
     line-height: 30px;
     text-align: center;
@@ -467,6 +478,7 @@ body {
 
 .bank-bet-container {
     display: flex;
+    position: relative;
     flex-flow: row;
     align-items: center;
     justify-content: center;
@@ -476,11 +488,46 @@ body {
 
 .bank-bet {
     display: flex; 
+    position: relative;
     flex-flow: column;
     align-items: center;
     justify-content: center;
     height: 100%;
     flex: 1;
+}
+
+.winnings {
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    width: 80px;
+    height: 30px;
+    background-color: rgb(17, 156, 98);
+    border-radius: 5px;
+    color: black;
+    opacity: 0;
+    transition: all 0.5s;
+    font-family: montserrat, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.slide-animation {
+    animation: shiftup linear 1.5s;
+}
+
+@keyframes shiftup {
+    20%{
+        opacity: 1;
+    }
+    80%{
+        opacity:1;
+    }
+    100%{
+        opacity:0;
+        transform: translateY(-50px);
+    }
 }
 
 .bank-bet span {
