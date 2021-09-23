@@ -294,7 +294,9 @@ const resetDiceAnimation = () => {
 
 const diceAnimation = () => {
     $('.dice-roll').css('opacity', '1')
-    turnsRemaining()
+    if(gameMode='choice2'){
+        turnsRemaining()
+    }
     for(const i in diceResults) {
         $('.dice-roll-dice').eq(i).addClass(diceAnimationClasses[i])
     }
@@ -318,7 +320,7 @@ const gameOver = () => {
         if(players[i].name !== winner && players[i].bank === winnerBank) {
             $('.dice-roll-text').text('It\'s a tie!')
         } else {
-            $('.dice-roll-text').text(`${winner} won with ${winnerBank} in the bank!`)
+            $('.dice-roll-text').text(`${winner} won with $${winnerBank} in the bank!`)
         }
     }
     for(let j = 0; j < numOfPlayers; j++) {
@@ -327,18 +329,17 @@ const gameOver = () => {
 }
 
 const run = () => {
+    rollDice()  
+    for(let i = 0; i < numOfPlayers; i++) {
+        calcPayout(players[i])
+        players[i].transferPayout()
+        reset(players[i])
+    }
     totalTurnCounter++
+    diceAnimation()
+    setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     if(totalTurnCounter === TOTAL_TURNS && gameMode === 'choice2') {
         gameOver()
-    } else {
-        rollDice()  
-        for(let i = 0; i < numOfPlayers; i++) {
-            calcPayout(players[i])
-            players[i].transferPayout()
-            reset(players[i])
-        }
-        diceAnimation()
-        setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     }
 }
 
