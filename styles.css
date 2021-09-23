@@ -756,7 +756,7 @@ body {
 }
 
 .turns-remaining {
-    display: flex;
+    display: none;
     height: max-content;
     width: 100%;
     align-content: center;

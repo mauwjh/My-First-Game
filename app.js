@@ -274,6 +274,7 @@ const clear = (player) => () => {
 }
 
 const turnsRemaining = () => {
+    $('.turns-remaining').css('display', 'flex')
     $('.turns-remaining').text(`${10 - totalTurnCounter} turns remaining`)
 }
 
@@ -294,7 +295,7 @@ const resetDiceAnimation = () => {
 
 const diceAnimation = () => {
     $('.dice-roll').css('opacity', '1')
-    if(gameMode==='choice2'){
+    if(gameMode === 'choice2') {
         turnsRemaining()
     }
     for(const i in diceResults) {
@@ -339,7 +340,7 @@ const run = () => {
     diceAnimation()
     setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     if(totalTurnCounter === TOTAL_TURNS && gameMode === 'choice2') {
-        gameOver()
+        setTimeout(gameOver,TOTAL_ANIMATION_LENGTH)
     }
 }
 
