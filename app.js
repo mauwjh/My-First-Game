@@ -5,6 +5,9 @@ let numOfPlayers = 3
 let turnCounter = 1
 let squaresWon = []
 let chipsRemove = []
+let gameMode = ''
+let totalTurnCounter = 0
+const TOTAL_TURNS = 1
 const DICE_ANIMATION_LENGTH = 4000
 const HIGHLIGHT_SQUARES_LENGTH = 5000
 const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH
@@ -25,8 +28,9 @@ const diceAnimationClasses = [
 
 // Player class declaration
 class Player {
-    constructor() {
-        this.bets = Array(49).fill(0);
+    constructor(name) {
+        this.name = name
+        this.bets = Array(50).fill(0);
         this.bank = 2000;
         this.payout = [];
     }
@@ -40,7 +44,7 @@ class Player {
 }
 
 // Player objects declaration
-const players = [new Player(), new Player(), new Player()]
+const players = [new Player('Player 1'), new Player('Player 2'), new Player('Player 3')]
 
 const playerChipColors = [
     [players[0], 'Images/Black-Chip.png', 'p1-chip'],
@@ -202,6 +206,7 @@ const disableNextClearChips = (player) => {
 
 const removeChips = () => {
     chipsRemove = chipsRemove.filter((a, b, c) => c.indexOf(a) == b)
+    console.log(chipsRemove)
     for(const squaresIndex of chipsRemove) {
         for(let i = 0; i < players.length; i++) {
             for(let j = 0; j < $(`#${squaresIndex}`).find(`#${playerChipColors[i][2]}`).length; j++) {
@@ -257,7 +262,7 @@ const nextPlayer = (player) => () => {
 }
 
 const reset = (player) => {
-    player.bets = Array(49).fill(0)
+    player.bets = Array(50).fill(0)
     player.payout = []
 }
 
@@ -266,6 +271,10 @@ const clear = (player) => () => {
     bet = 0
 
     render()
+}
+
+const turnsRemaining = () => {
+    $('.turns-remaining').text(`${10 - totalTurnCounter} turns remaining`)
 }
 
 const changeDice = () => {
@@ -285,6 +294,7 @@ const resetDiceAnimation = () => {
 
 const diceAnimation = () => {
     $('.dice-roll').css('opacity', '1')
+    turnsRemaining()
     for(const i in diceResults) {
         $('.dice-roll-dice').eq(i).addClass(diceAnimationClasses[i])
     }
@@ -292,23 +302,44 @@ const diceAnimation = () => {
     setTimeout(resetDiceAnimation, DICE_ANIMATION_LENGTH)
 }
 
-const allowSubmit = () => {
-    if($('#game-mode').find(':selected').val() !== 'none' && $('#numOfPlayers').find(':selected').val() !== 'none') {
-        $('.submit').css({'opacity': '1', 'pointer-events': 'auto'})
-    } else {
-        $('.submit').css({'opacity': '0', 'pointer-events': 'none'})
+const gameOver = () => {
+    let winner = ''
+    let winnerBank = 0
+    $('.dice-roll').css('opacity', '1')
+    $('.dice-container').hide()
+    $('.turns-remaining').hide()
+    for(let i = 0; i < players.length; i++) {
+        if(players[i].bank > winnerBank) {
+            winnerBank = players[i].bank
+            winner = players[i].name
+        }
+    }
+    for(let i = 0; i < players.length; i++) {
+        if(players[i].name !== winner && players[i].bank === winnerBank) {
+            $('.dice-roll-text').text('It\'s a tie!')
+        } else {
+            $('.dice-roll-text').text(`${winner} won with ${winnerBank} in the bank!`)
+        }
+    }
+    for(let j = 0; j < players.length; j++) {
+        $('.dice-roll').append($('<div>').addClass('turns-remaining').text(`${players[j].name}: $${players[j].bank}`))
     }
 }
 
 const run = () => {
-    rollDice()
-    for(let i = 0; i < numOfPlayers; i++) {
-        calcPayout(players[i])
-        players[i].transferPayout()
-        reset(players[i])
+    totalTurnCounter++
+    if(totalTurnCounter === TOTAL_TURNS && gameMode === 'choice2') {
+        gameOver()
+    } else {
+        rollDice()  
+        for(let i = 0; i < numOfPlayers; i++) {
+            calcPayout(players[i])
+            players[i].transferPayout()
+            reset(players[i])
+        }
+        diceAnimation()
+        setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
     }
-    diceAnimation()
-    setTimeout(highlightWinSquares, DICE_ANIMATION_LENGTH)
 }
 
 const buttonInit = () => {
@@ -345,6 +376,46 @@ const boardInit = () => {
     }
 }
 
+const allowSubmit = () => {
+    if($('#game-mode').find(':selected').val() !== 'none' && $('#numOfPlayers').find(':selected').val() !== 'none') {
+        $('.submit').css({'opacity': '1', 'pointer-events': 'auto'})
+    } else {
+        $('.submit').css({'opacity': '0', 'pointer-events': 'none'})
+    }
+}
+
+const landingPageInit = () => {
+    $('.submit').css('opacity', '0')
+    $('#numOfPlayers').on('change', () => {
+        numOfPlayers = $('#numOfPlayers').find(':selected').val()
+        allowSubmit()
+    })
+
+    $('.game-desc').hide()
+    $('#game-mode').on('change', () => {
+        $('.game-desc').hide()
+        var x = $('#game-mode').find(':selected').val()
+        $('#' + x).show()
+        if(x === 'choice2') {
+            $('#numOfPlayers').children().eq(1).hide()
+        } else {
+            $('#numOfPlayers').children().show()
+        }
+        if(x === 'choice2' && $('#numOfPlayers').find(':selected').val() == 1) {
+            $('#numOfPlayers').val('none')
+        }
+        gameMode = x
+        allowSubmit()
+    })
+
+    $('.submit').on('click', () => {
+        boardInit()
+        buttonInit()
+        $('#landing-page').css('opacity', '0')
+        setTimeout(() => {$('#landing-page').hide()}, 500)
+    })
+}
+
 const render = () => {
     $('#p1-bank').text(players[0].bank)
     $('#p2-bank').text(players[1].bank)
@@ -360,7 +431,7 @@ const render = () => {
 }
 
 const main = () => {
-    // Disable betting squares at the start of the game
+    // disable betting squares at the start of the game
     $('.button').addClass('disabled')
     disableNextClearChips('2')
     disableNextClearChips('3')
@@ -368,27 +439,8 @@ const main = () => {
     // initial render
     render()
 
-    $('.submit').css({'opacity': '0'})
-    $('#numOfPlayers').on('change', () => {
-        numOfPlayers = $('#numOfPlayers').find(':selected').val()
-        console.log(numOfPlayers)
-        allowSubmit()
-    })
-
-    $('.game-desc').hide()
-    $('#game-mode').on('change', () => {
-        $('.game-desc').hide()
-        var x = $('#game-mode').find(':selected').val()
-        $('#' + x).show()
-        allowSubmit()
-    })
-
-    $('.submit').on('click', () => {
-        boardInit()
-        buttonInit()
-        $('#landing-page').css('opacity', '0')
-        setTimeout(() => {$('#landing-page').hide()}, 500)
-    })
+    // landing page initialisation
+    landingPageInit()
 }
 
 $(main)

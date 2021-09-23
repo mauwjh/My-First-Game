@@ -681,7 +681,7 @@ body {
 .dice-roll {
     display: flex;
     position: absolute;
-    flex-flow: row wrap;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -691,6 +691,15 @@ body {
     opacity: 0;
     transition: opacity 0.5s;
     pointer-events:  none;;
+}
+
+.dice-container {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
 }
 
 .dice-roll-dice {
@@ -739,9 +748,20 @@ body {
     display: flex;
     height: max-content;
     width: 100%;
-    margin-top: -400px;
     align-content: center;
     justify-content: center;
     font-size: 50px;
     color: white;
+    font-family: montserrat, sans-serif;
+}
+
+.turns-remaining {
+    display: flex;
+    height: max-content;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
+    font-size: 30px;
+    color: rgb(5, 159, 159);
+    font-family: montserrat, sans-serif;
 }
