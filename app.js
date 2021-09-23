@@ -1,13 +1,13 @@
 // Variable declaration
 let diceResults = []
 let bet = 0
-let numOfPlayers = 3
+let numOfPlayers = 0
 let turnCounter = 1
 let squaresWon = []
 let chipsRemove = []
 let gameMode = ''
 let totalTurnCounter = 0
-const TOTAL_TURNS = 1
+const TOTAL_TURNS = 10
 const DICE_ANIMATION_LENGTH = 4000
 const HIGHLIGHT_SQUARES_LENGTH = 5000
 const TOTAL_ANIMATION_LENGTH = DICE_ANIMATION_LENGTH + HIGHLIGHT_SQUARES_LENGTH
