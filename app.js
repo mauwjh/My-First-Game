@@ -199,7 +199,7 @@ const calcPayout = (player) => {
     }
 }
 
-// Enables player buttons based on turn
+//! Enables player buttons based on turn
 const enableNextClearChips = (player) => () => {
     let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
     let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
@@ -212,7 +212,7 @@ const enableNextClearChips = (player) => () => {
     $(`#p${player}-arrow`).show()
 }
 
-// Disables player buttons if not their turn
+//! Disables player buttons if not their turn
 const disableNextClearChips = (player) => () =>{
     let buttonsArray = [$(`#p${player}-next`),$(`#p${player}-clear`)]
     let chipsArray = [$(`#p${player}-chips-5`), $(`#p${player}-chips-10`), $(`#p${player}-chips-50`), $(`#p${player}-chips-100`)]
@@ -268,7 +268,7 @@ const highlightWinSquares = () => {
     setTimeout(removeChips,HIGHLIGHT_SQUARES_LENGTH)
 }
 
-// Called when 'Done' button is pressed
+//! Called when 'Done' button is pressed
 // Calls the disable function which disables the current player's buttons and activates the next player's buttons
 // If the player is the last in the round, triggers dice roll via the run() function
 const nextPlayer = (player) => () => {

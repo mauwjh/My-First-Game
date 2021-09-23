@@ -1,7 +1,22 @@
+:root {
+    --gold:gold;
+    --blue:#33344F;
+    --white: white;
+    --green: rgb(60, 78, 30);
+    --grey: slategrey;
+}
+
 
 body {
+    --font1: var(--white);
+    --font2: var(--gold);
+    --font3: var(--grey);
+    --border1: var(--white);
+    --border2: var(--gold);
+    --boardBackground: var(--green);
+    --landingBackground: var(--blue);
     font-family: 'Unna', serif;
-    color: gold;
+    color: var(--font2);
     overflow-x: hidden;
     overflow-y: hidden;
     position: relative;
@@ -17,9 +32,9 @@ body {
     justify-content: center;
     height: 100%;
     width: 100%;
-    background-color: #33344F;
+    background-color: var(--landingBackground);
     font-family: montserrat, sans-serif;
-    color: white;
+    color: var(--font1);
     transition: opacity 0.5s;
     z-index: 2000;
 }
@@ -40,10 +55,11 @@ body {
 .dropdown {
     height: 30px;
     width: 200px;
-    background: slategrey;
-    color: white;
+    background: none;
+    color: var(--font1);
     margin: 10px;
     font-family: inherit;
+    border-radius: 10px;
 }
 
 .game-desc {
@@ -98,7 +114,7 @@ body {
     flex-direction: column;
     position: relative;
     align-items: center;
-    background-color: rgb(60, 78, 30);
+    background-color: var(--boardBackground);
     width: 100%;
     padding-top: 5vh;
     height: 100vh;
@@ -111,7 +127,7 @@ body {
     height: 495px;
     min-width: 1300px;
     max-width: 1300px;
-    border: 2px solid gold;
+    border: 2px solid var(--border2);
     border-radius: 25px;
 }
 
@@ -131,7 +147,7 @@ body {
 
 .column-square {
     text-align: center;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -145,7 +161,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-bottom: 2px solid gold;
+    border-bottom: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -304,7 +320,7 @@ body {
     min-height: 90px;
     display: flex;
     flex-direction: row;
-    border-top: 2px solid gold;
+    border-top: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -314,7 +330,7 @@ body {
     align-items: center;
     justify-content: center;
     flex: 1;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -330,7 +346,7 @@ body {
     line-height: 30px;
     font-size: 16px;
     font-weight: bold;
-    color: white;
+    color: var(--font1);
 }
 
 #row3 {
@@ -339,14 +355,14 @@ body {
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
-    border-top: 2px solid gold;
+    border-top: 2px solid var(--border2);
 }
 
 .row-header {
     flex: 3.05 1 0;
     display: flex;
     flex-direction: row;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -369,7 +385,7 @@ body {
 #arrow {
     border-top:40px solid transparent;
     border-bottom: 40px solid transparent;
-    border-left: 30px solid white; 
+    border-left: 30px solid var(--border1); 
     width: 0;
     height: 0;
     margin-right: 30px;
@@ -382,7 +398,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -390,7 +406,7 @@ body {
     min-height: 70px;
     max-height: 70px;
     display: flex;
-    border-top: 2px solid gold;
+    border-top: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
@@ -399,7 +415,7 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     flex: 1 1 0;
     box-sizing: border-box;
 }
@@ -421,18 +437,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    border-top: 2px solid gold;
+    border-top: 2px solid var(--border2);
     box-sizing: border-box;
 }
 
 .singles-desc {
     display: flex;
-    border-right: 2px solid gold;
+    border-right: 2px solid var(--border2);
     box-sizing: border-box;
     flex: 1;
     line-height: 35px;
     justify-content: center;
-    color: white;
+    color: var(--font1);
     font-weight: bold;
     font-size: 20px;
 }
@@ -443,7 +459,7 @@ body {
     margin-top: 20px;
     max-width: 100%;
     min-width: 33.33;
-    border: 2px solid white;
+    border: 2px solid var(--border1);
     border-radius: 25px;
 }
 
@@ -452,7 +468,7 @@ body {
     flex-direction: column;
     height: 120px;
     width: 433px;
-    border-right: 2px solid white;
+    border-right: 2px solid var(--border1);
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -463,12 +479,12 @@ body {
     align-items: center;
     justify-content: center;
     flex: 1;
-    border-bottom: 2px solid white; 
+    border-bottom: 2px solid var(--border1); 
     width: 100%;
 }
 
 .player-text {
-    color: gold;
+    color: var(--font2);
     font-size: 25px;
     font-weight: bold;
     display: flex;
@@ -535,7 +551,7 @@ body {
     flex: 1;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--font1);
 }
 
 .subheader-text {
@@ -571,8 +587,8 @@ body {
     background-color: red;
     border-radius: 5px;
     font-size: 20px;
-    color: white;
-    border-color: gold;
+    color: var(--font1);
+    border-color: var(--border2);
     border-style: solid; 
     height: 80%;
     flex: 1;
@@ -584,8 +600,8 @@ body {
     background-color: navy;
     border-radius: 5px;
     font-size: 20px;
-    color: white;
-    border-color: gold;
+    color: var(--font1);
+    border-color: var(--border2);
     border-style: solid; 
     height: 80%;
     flex: 1;
@@ -643,7 +659,7 @@ body {
     margin-right: 208px;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
-    border-left: 8px solid white;
+    border-left: 8px solid var(--border1);
     animation: blink-arrow 1s linear infinite 
 }
 
@@ -798,7 +814,7 @@ body {
     align-content: center;
     justify-content: center;
     font-size: 50px;
-    color: white;
+    color: var(--font1);
     font-family: montserrat, sans-serif;
 }
 
