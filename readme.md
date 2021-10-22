@@ -24,8 +24,8 @@ Casino Mode
 5) Players are not competing directly with each other. As such, on Casino mode, the game can continue as long as players have money in the bank.
 
 ## Wireframes
-Search Component  
-![](src/Images/SicboPlayerBoard.png)
+Main Player Board 
+![](/Images/SicboPlayerBoard.png)
 
-Transaction Component  
-![](src/Images/DiceRoll.png)
+Dice Roll Animation
+![](/Images/DiceRoll.png)
