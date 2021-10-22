@@ -9,14 +9,14 @@ This site was created using HTML, CSS, and Javascript
 **Libraries**: jQuery 
 
 ## User Story
-PVP Mode
+**PVP Mode**
 1) Can be played with 2 - 3 players
 2) Each player will take turns selecting their bet values and placing it on the board
 3) Once all players have ended their turn, 3 dice will roll
 4) Payouts will be distributed based on the bets placed and the dice outcome
 5) The player with the most money in the bank at the end of 10 turns wins
 
-Casino Mode
+**Casino Mode**
 1) Can be played with up to 3 players
 2) Each player will take turns selecting their bet values and placing it on the board
 3) Once all players have ended their turn, 3 dice will roll
@@ -24,8 +24,8 @@ Casino Mode
 5) Players are not competing directly with each other. As such, on Casino mode, the game can continue as long as players have money in the bank.
 
 ## Wireframes
-Main Player Board 
+**Main Player Board**
 ![](/Images/SicboPlayerBoard.png)
 
-Dice Roll Animation
+**Dice Roll Animation**
 ![](/Images/DiceRoll.png)
